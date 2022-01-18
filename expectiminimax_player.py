@@ -2,6 +2,7 @@
 The AI Player, also known as Vector
 """
 
+
 class ExpectiMiniMaxPlayer():
     def __init__(self):
         None
@@ -25,13 +26,14 @@ class ExpectiMiniMaxPlayer():
             highest_score, best_move = max(score_move_pairs)
             return best_move
 
+    def expectimin(self, clock, move):
+        if next_move:
 
-    def min(self, clock, move):
         return min_score
 
-
-    def max(self, clock, move):
+    def expectimax(self, clock, move):
         return max_score
+
 
 """ Wikipedia pseudocode
 function expectiminimax(node, depth)
