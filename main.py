@@ -71,9 +71,7 @@ class Game:
     The loop of the game
     """
     def game_loop(self):
-
-
-
+        self.game.do_move(game)
 
 if __name__ == "__main__":
     game = Game()

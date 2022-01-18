@@ -1,3 +1,8 @@
+"""
+CubeRunner, the file running the CubeClock, kind of
+"""
+
+import random
 from cube_clock import CubeClock
 
 
@@ -12,3 +17,15 @@ class CubeRunner:
             move = self.current_player.do_move()
             self.clock.place_move(self.currrent_player, steps)
             self.change_player()
+
+    def check_win(self):
+        return self.clock.check_win()
+
+    def change_player(self):
+        self.current_player = (self.current_player + 1) % len(self.players)
+
+    def reset(self):
+        self.clock = CubeClock(self.players[0], self.players[1])
+
+    def get_current_player(self):
+        return self.current_player
