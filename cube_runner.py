@@ -16,6 +16,8 @@ class CubeRunner:
         if not self.clock.check_win():
             move = self.current_player.do_move()
             self.clock.place_move(self.current_player, move)
+            if self.current_player == self.players[0]:
+                self.clock.new_cube_state()
             self.change_player()
 
     def change_player(self):

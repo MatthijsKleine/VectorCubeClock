@@ -17,8 +17,13 @@ class ExpectiMiniMaxPlayer:
         # For every possible move, add the move and it's score to a list
         score_move_pairs = []
         for next_move in clock.get_possible_moves(player):
-            next_score = self.expecti_min(clock, player, next_move, self.depth)
-            score_move_pairs.append((next_score, next_move))
+            next_score = 0
+            previous_cube_state = clock.current_cube_state
+            for i in range(1, 4):
+                clock.current_cube_state = clock.cube_states[i]
+                next_score = next_score + self.expecti_min(clock, player, next_move, self.depth)
+            score_move_pairs.append((next_score/4, next_move))
+            clock.current_cube_state = previous_cube_state
 
         # If there is no move left return 0, else return the best move
         if not score_move_pairs:
@@ -40,7 +45,7 @@ class ExpectiMiniMaxPlayer:
         next_clock.place_move(player, steps)
 
         # Memoisation
-        dict_clock  = next_clock.spots
+        dict_clock = next_clock.spots
         if dict_clock in self.known_clocks:
             return self.known_clocks[dict_clock]
 
@@ -92,7 +97,13 @@ class ExpectiMiniMaxPlayer:
         scores = []
         # Compute the minimum score of all possible moves
         for new_move in next_clock.get_possible_moves():
-            scores.append(self.expecti_max(next_clock, player, new_move, depth))
+            next_score = 0
+            previous_cube_state = current_clock.current_cube_state
+            for i in range(1, 4):
+                current_clock.current_cube_state = current_clock.cube_states[i]
+                next_score = next_score + self.expecti_min(current_clock, player, new_move, self.depth)
+            scores.append((next_score / 4, new_move))
+            current_clock.current_cube_state = previous_cube_state
         max_score = max(scores)
         self.known_clocks[dict_clock] = max_score
         return max_score
