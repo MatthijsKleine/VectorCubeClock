@@ -3,34 +3,35 @@ The AI Player, also known as Vector
 """
 
 
-class ExpectiMiniMaxPlayer():
+class ExpectiMiniMaxPlayer:
     def __init__(self):
         self.depth = 0
         self.max_depth = 5
         self.known_clocks = dict()
+        self.times_called = 0
 
-    def do_move(self, clock):
-        return self.calculate_next_move(clock)
+    def do_move(self, clock, player):
+        return self.calculate_next_move(clock, player)
 
-    def calculate_next_move(self, clock):
+    def calculate_next_move(self, clock, player):
         # For every possible move, add the move and it's score to a list
         score_move_pairs = []
-        for next_move in clock.get_possible_moves():
-            next_score = self.min(clock, next_move)
+        for next_move in clock.get_possible_moves(player):
+            next_score = self.expecti_min(clock, player, next_move, self.depth)
             score_move_pairs.append((next_score, next_move))
 
         # If there is no move left return 0, else return the best move
         if not score_move_pairs:
             return 0
         else:
-            for move_pair in score_move_pairs:
-                move_pair[1]
             highest_score, best_move = max(score_move_pairs)
             return best_move
 
-    def expectimin(self, current_clock, player, steps, depth):
+    def expecti_min(self, current_clock, player, steps, depth):
         # Update depth
         depth = depth + 1
+        self.times_called = self.times_called + 1
+        print(self.times_called)
 
         # The next clock is a (deep) copy of the current clock
         next_clock = current_clock.deep_copy()
@@ -40,29 +41,60 @@ class ExpectiMiniMaxPlayer():
 
         # Memoisation
         dict_clock  = next_clock.spots
-        if (dict_clock in self.known_clocks):
-
+        if dict_clock in self.known_clocks:
+            return self.known_clocks[dict_clock]
 
         # If too deep you lose
         if depth < 8:
-            self.known_clocks[dict_clock] = 0
-            return 0
+            self.known_clocks[dict_clock] = -1
+            return -1
 
         # If it is a win return 10
-        if next_clock.check_win(player):
-            self.known_clocks[dict_clock] = 10
-            return 10
+        if next_clock.check_win():
+            self.known_clocks[dict_clock] = 1
+            return 1
 
         scores = []
         # Compute the minimum score of all possible moves
-        for new_move in next_clock.get_spots():
-            #
-            scores.append(self.expectimax(()))
-
-
+        for new_move in next_clock.get_possible_moves():
+            scores.append(self.expecti_max(next_clock, player, new_move, depth))
+        min_score = min(scores)
+        self.known_clocks[dict_clock] = min_score
         return min_score
 
-    def expectimax(self, clock, move):
+    def expecti_max(self, current_clock, player, steps, depth):
+        # Update depth
+        depth = depth + 1
+        self.times_called = self.times_called + 1
+        print(self.times_called)
+
+        # The next clock is a (deep) copy of the current clock
+        next_clock = current_clock.deep_copy()
+
+        # Place move on the next clock
+        next_clock.place_move(player, steps)
+
+        # Memoisation
+        dict_clock = next_clock.spots
+        if dict_clock in self.known_clocks:
+            return self.known_clocks[dict_clock]
+
+        # If too deep you win
+        if depth < 8:
+            self.known_clocks[dict_clock] = 1
+            return 10
+
+        # If it is a win return 10
+        if next_clock.check_win(player):
+            self.known_clocks[dict_clock] = 0
+            return 0
+
+        scores = []
+        # Compute the minimum score of all possible moves
+        for new_move in next_clock.get_possible_moves():
+            scores.append(self.expecti_max(next_clock, player, new_move, depth))
+        max_score = max(scores)
+        self.known_clocks[dict_clock] = max_score
         return max_score
 
 

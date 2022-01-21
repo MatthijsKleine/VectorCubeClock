@@ -2,6 +2,7 @@
 The Cube Clock, also known as the board
 """
 import copy
+import random
 
 
 class CubeClock:
@@ -10,6 +11,8 @@ class CubeClock:
         self.vector_spot = 0
         self.cube_spot = 4
         self.max_spot = 8
+        self.cube_states = [(0, "Black"), (1, "Red"), (2, "Green"), (3, "Blue"), (4, "Yellow")]
+        self.current_cube_state = self.cube_states[3]
         self.human = player1
         self.vector = player2
         self.spots = (self.vector_spot, self.cube_spot)
@@ -26,17 +29,40 @@ class CubeClock:
         self.vector_spot = (self.vector_spot - self.vector_spot) % (self.max_spot + 1)
         self.spots = (self.vector_spot, self.cube_spot)
 
-    def check_win(self, player):
+    def new_cube_state(self):
+        self.current_cube_state = self.cube_states[random.randint(1, 4)]
+
+    def check_win(self):
         win = False
         if self.cube_spot == self.vector_spot:
             win = True
-        if player == self.human:
-            win = not win
         return win
 
     def get_spots(self):
         spots = (self.cube_spot, self.vector_spot)
         return spots
+
+    def get_possible_moves(self, player):
+        moves = []
+        if player == self.human:
+            if self.current_cube_state[0] == 1:
+                moves = [(self.cube_spot - 2) % (self.max_spot + 1), (self.cube_spot + 2) % (self.max_spot + 1)]
+            if self.current_cube_state[0] == 2:
+                moves = [(self.cube_spot - 1) % (self.max_spot + 1), (self.cube_spot + 1) % (self.max_spot + 1)]
+            if self.current_cube_state[0] == 3:
+                moves = [self.cube_spot, self.cube_spot]
+            if self.current_cube_state[0] == 4:
+                moves = [(self.cube_spot - 3) % (self.max_spot + 1), (self.cube_spot + 3) % (self.max_spot + 1)]
+        elif player == self.vector:
+            if self.current_cube_state[0] == 1:
+                moves = [(self.vector_spot - 1) % (self.max_spot + 1), (self.vector_spot + 1) % (self.max_spot + 1)]
+            if self.current_cube_state[0] == 2:
+                moves = [(self.vector_spot - 2) % (self.max_spot + 1), (self.vector_spot + 2) % (self.max_spot + 1)]
+            if self.current_cube_state[0] == 3:
+                moves = [(self.vector_spot - 3) % (self.max_spot + 1), (self.vector_spot + 3) % (self.max_spot + 1)]
+            if self.current_cube_state[0] == 4:
+                moves = [self.vector_spot, self.vector_spot]
+        return moves
 
     def deep_copy(self):
         return copy.deepcopy(self)

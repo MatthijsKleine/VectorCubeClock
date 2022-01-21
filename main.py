@@ -18,11 +18,11 @@ Tutorials and referencing used from keith at Kinvert: https://www.kinvert.com/an
 Expectiminimax algorithm heavily based on tutorial 09 and pseudocode from Wikipedia: https://en.wikipedia.org/wiki/Expectiminimax
 """
 # Importing the required libraries
-import anki_vector
-from anki_vector import lights
-from anki_vector.util import degrees, distance_mm, speed_mmps
+# import anki_vector
+# from anki_vector import lights
+# from anki_vector.util import degrees, distance_mm, speed_mmps
 import time
-from cube_clock import CubeClock
+from cube_runner import CubeRunner
 from human_player import HumanPlayer
 from expectiminimax_player import ExpectiMiniMaxPlayer
 
@@ -35,8 +35,9 @@ class Game:
         # Initializing the classes
         self.player1 = HumanPlayer()
         self.player2 = ExpectiMiniMaxPlayer()
-        self.game = CubeClock(self.player1, self.player2)
+        self.game = CubeRunner(self.player1, self.player2)
 
+        """
         # Referencing Vector as just "robot"
         self.args = anki_vector.util.parse_command_args()
 
@@ -66,12 +67,14 @@ class Game:
             robot.behavior.say_text("You can move first, put the cube behind me and tap it!")
             time.sleep(0.2)
             robot.behavior.say_text("Let's see how many moves we have!")
+        """
 
     """
     The loop of the game
     """
     def game_loop(self):
-        self.game.do_move(game)
+        self.game.do_move()
+
 
 if __name__ == "__main__":
     game = Game()

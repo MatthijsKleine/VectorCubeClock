@@ -12,17 +12,17 @@ class CubeRunner:
         self.players = [player1, player2]
         self.current_player = self.players[0]
 
-    def do_move(self, steps):
-        if not self.check_someone_won():
+    def do_move(self):
+        if not self.clock.check_win():
             move = self.current_player.do_move()
-            self.clock.place_move(self.currrent_player, steps)
+            self.clock.place_move(self.current_player, move)
             self.change_player()
 
-    def check_win(self):
-        return self.clock.check_win()
-
     def change_player(self):
-        self.current_player = (self.current_player + 1) % len(self.players)
+        if self.current_player == self.players[0]:
+            self.current_player = self.players[1]
+        else:
+            self.current_player = self.players[0]
 
     def reset(self):
         self.clock = CubeClock(self.players[0], self.players[1])
