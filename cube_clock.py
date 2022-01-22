@@ -7,21 +7,21 @@ import random
 
 class CubeClock:
     def __init__(self, player1, player2):
-        # Starting game positions (0 to 8 going clockwise)
+        # Starting game positions (0 to 7 going clockwise)
         self.vector_spot = 0
-        self.cube_spot = 4
-        self.max_spot = 8
+        self.cube_spot = 3
+        self.max_spot = 7
         self.cube_states = [(0, "Black"), (1, "Red"), (2, "Green"), (3, "Blue"), (4, "Yellow")]
         self.current_cube_state = self.cube_states[3]
         self.human = player1
         self.vector = player2
         self.spots = (self.vector_spot, self.cube_spot)
 
-    def place_move(self, player, steps):
+    def place_move(self, player, move):
         if player == self.human:
-            self.cube_spot = (self.cube_spot + steps) % (self.max_spot + 1)
+            self.cube_spot = move
         elif player == self.vector:
-            self.vector_spot = (self.vector_spot + steps) % (self.max_spot + 1)
+            self.vector_spot = move
             # robot.behaviour turn 45 degrees TO BE ADDED
 
         # Reset vector_spot for better memoisation
@@ -31,6 +31,7 @@ class CubeClock:
 
     def new_cube_state(self):
         self.current_cube_state = self.cube_states[random.randint(1, 4)]
+        # UPDATE CUBE LIGHTS
 
     def check_win(self):
         win = False

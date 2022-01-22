@@ -11,10 +11,19 @@ class CubeRunner:
         self.clock = CubeClock(player1, player2)
         self.players = [player1, player2]
         self.current_player = self.players[0]
+        # CALIBRATION OF TOUCH SENSOR
 
     def do_move(self):
         if not self.clock.check_win():
-            move = self.current_player.do_move()
+            move = 0
+            if self.current_player == self.players[0]:
+                moves = self.clock.get_possible_moves(self.current_player)
+                if back_rubbed hard:
+                    move = moves[0]
+                elif rubbed soft:
+                    move = moves[1]
+            else:
+                move = self.current_player.do_move()
             self.clock.place_move(self.current_player, move)
             if self.current_player == self.players[0]:
                 self.clock.new_cube_state()

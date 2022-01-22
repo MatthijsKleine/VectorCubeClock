@@ -87,12 +87,12 @@ class ExpectiMiniMaxPlayer:
         # If too deep you win
         if depth < 8:
             self.known_clocks[dict_clock] = 1
-            return 10
+            return 1
 
-        # If it is a win return 10
+        # If it is a win return -1
         if next_clock.check_win(player):
-            self.known_clocks[dict_clock] = 0
-            return 0
+            self.known_clocks[dict_clock] = -1
+            return -1
 
         scores = []
         # Compute the minimum score of all possible moves
