@@ -17,15 +17,19 @@ Tutorials and referencing used from keith at Kinvert: https://www.kinvert.com/an
 
 Expectiminimax algorithm heavily based on tutorial 09 and pseudocode from Wikipedia: https://en.wikipedia.org/wiki/Expectiminimax
 """
+
+
 # Importing the required libraries
-# import anki_vector
-# from anki_vector import lights
-# from anki_vector.util import degrees, distance_mm, speed_mmps
+import anki_vector
+from anki_vector import lights
+from anki_vector.util import degrees, distance_mm, speed_mmps
 import time
 from cube_runner import CubeRunner
 from human_player import HumanPlayer
 from expectiminimax_player import ExpectiMiniMaxPlayer
 
+
+game_active = True
 
 class Game:
     """
@@ -35,51 +39,49 @@ class Game:
         # Initializing the classes
         self.player1 = HumanPlayer()
         self.player2 = ExpectiMiniMaxPlayer()
-        self.game = CubeRunner(self.player1, self.player2)
-
-        """
-        # Referencing Vector as just "robot"
         self.args = anki_vector.util.parse_command_args()
+        self.robot = anki_vector.Robot(self.args.serial)
 
-        # Running the starting actions
-        with anki_vector.Robot(self.args.serial) as robot:
-            # Waking up Vector
-            robot.behavior.set_eye_color(hue=0.16, saturation=1)
-            robot.behavior.drive_off_charger()
-            time.sleep(0.5)
+        # Waking up Vector
+        self.robot.behavior.set_eye_color(hue=0.16, saturation=1)
+        self.robot.behavior.drive_off_charger()
+        time.sleep(0.5)
+        # Clearing his vision
+        self.robot.behavior.set_head_angle(degrees(-5.0))
+        self.robot.behavior.set_lift_height(0.0)
+        # Connecting to the cube
+        self.robot.behavior.say_text("Connecting to cube...")
+        while not self.robot.world.connected_light_cube:
+            print("No Cube Yet...")
+            self.robot.world.connect_cube()
+        print("Connected")
+        time.sleep(0.1)
+        self.cube = self.robot.world.connected_light_cube
+        # Starting the game
+        self.robot.behavior.say_text("Let's play a game!")
+        time.sleep(0.2)
+        self.robot.behavior.say_text("You can move first, put the cube behind me and tap it!")
+        time.sleep(0.2)
+        self.robot.behavior.say_text("Let's see how many moves we have!")
 
-            # Clearing his vision
-            robot.behavior.set_head_angle(degrees(-5.0))
-            robot.behavior.set_lift_height(0.0)
-
-            # Connecting to the cube
-            robot.behavior.say_text("Connecting to cube...")
-            while not robot.world.connected_light_cube:
-                print("No Cube Yet...")
-                robot.world.connect_cube()
-            print("Connected")
-            time.sleep(0.1)
-            cube = robot.world.connected_light_cube
-
-            # Starting the game
-            robot.behavior.say_text("Let's play a game!")
-            time.sleep(0.2)
-            robot.behavior.say_text("You can move first, put the cube behind me and tap it!")
-            time.sleep(0.2)
-            robot.behavior.say_text("Let's see how many moves we have!")
-        """
+        self.runner = CubeRunner(self.player1, self.player2, self.robot, self.cube)
 
     """
     The loop of the game
     """
     def game_loop(self):
-        self.game.do_move()
+        self.runner.do_move()
+        self.runner.turn_cycle()
+
+    def finish(self):
+
 
 
 if __name__ == "__main__":
     game = Game()
-    while True:
+    while game.runner.is_running():
         game.game_loop()
+    game.finish()
 
     # Left over but maybe reusable code from the initial idea
     # noinspection PyUnreachableCode
